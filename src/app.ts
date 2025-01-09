@@ -76,11 +76,28 @@ class ProjectInput {
         const enteredTitle = this.titleInputElement.value;
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = +this.peopleInputElement.value;
-        // validation should take place here
+
+        const titleValidatable: Validatable = {
+            value: enteredTitle,
+            required: true
+        }
+        const descriptionValidatable: Validatable = {
+            value: enteredDescription,
+            required: true,
+            minLength: 5
+        }
+        const peopleValidatable: Validatable = {
+            value: enteredPeople,
+            required: true,
+            min: 1,
+            max: 7
+        }
+
         const isValid: Boolean =  
-        validate({value: enteredTitle, required: true, minLength: 5}) &&
-        validate({value: enteredDescription, required: true, minLength: 5}) &&
-        validate({value: enteredPeople, required: true, min: 1});
+            validate(titleValidatable) &&
+            validate(descriptionValidatable) &&
+            validate(peopleValidatable);
+
         if (!isValid){
             alert('Invalid input, please try again');
             return;
