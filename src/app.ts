@@ -112,7 +112,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement>{
     abstract renderContent(): void;
 
 }
-class ProjectLIst extends Component <HTMLDivElement, HTMLElement>{
+class ProjectList extends Component <HTMLDivElement, HTMLElement>{
     assignedProjects: Project[] = [];
     constructor(private type: 'active' | 'finished'){
         super('project-list', 'app', 'beforeend', `${type}-projects`);
@@ -137,18 +137,16 @@ class ProjectLIst extends Component <HTMLDivElement, HTMLElement>{
     }
 
     renderContent(){
-        const listId = `${this.type}-project-list`;
+        const listId = `${this.type}-projects-list`;
         (this.htmlElement.querySelector('ul') as HTMLUListElement).id = listId;
         (this.htmlElement.querySelector('h2') as HTMLHeadingElement).textContent = this.type.toUpperCase() + ' PROJECTS';
     }
 
     private renderProjects(){
-        const listEl = document.getElementById(`${this.type}-project-list`) as HTMLUListElement;
+        const listEl = document.getElementById(`${this.type}-projects-list`) as HTMLUListElement;
         listEl.innerHTML = '';
         for(const prjItem of this.assignedProjects){
-            const listItem = document.createElement('li');
-            listItem.textContent = prjItem.title;
-            listEl.appendChild(listItem);
+            new ProjectItem(this.htmlElement.querySelector('ul')!.id, prjItem);
         }
     }
 
@@ -227,6 +225,26 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>{
 
 }
 
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>{
+    private project: Project;
+
+    constructor(hostId: string, project: Project){
+        super('single-project', hostId, "beforeend", project.id);
+        this.project = project;
+
+        this.configure();
+        this.renderContent();
+    }
+
+    configure(){}
+
+    renderContent(){
+        (this.htmlElement.querySelector('h2') as HTMLHeadingElement).textContent = this.project.title;
+        (this.htmlElement.querySelector('h3') as HTMLHeadingElement).textContent = this.project.people.toString();
+        (this.htmlElement.querySelector('p') as HTMLParagraphElement).textContent = this.project.description;
+    }
+}
+
 const prjInput = new ProjectInput();
-const activePrjList = new ProjectLIst('active');
-const finishedPrjList = new ProjectLIst('finished');
+const activePrjList = new ProjectList('active');
+const finishedPrjList = new ProjectList('finished');
